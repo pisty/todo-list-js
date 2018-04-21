@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container pt-5 text-center">
+        <h1>Todo List</h1>
+        <form class="my-5" action="">
+            <div class="input-group input-group-lg">
+                <input id="todoText" class="form-control" placeholder="Note..." type="text" />
+                <span class="input-group-btn">
+                    <button class="btn btn-primary btn-todo-add">Add</button>
+                </span>
+            </div>
+        </form>
+        <ul class="list-group" id="notes">
+
+        </ul>
+    </div>
+    <script src="TodoList.js"></script>
+    <script src="TodoHelper.js"></script>
+    <script src="Storage.js"></script>
+    <script>
+        $(function(){
+            var storage = new Storage();
+            var todoList = new TodoList(storage);
+            var $notes = $('#notes');
+            var $todoInput = $('#todoText');
+            var todoHelper = new TodoHelper($todoInput);
+
+            $notes.html(todoList.getNotes());
+
+            /*
+            * TODO refactor: ViewHelper, eventhandling
+            * */
+
+            $notes.on('click', '.btn-todo-delete', function(){
+                todoList.remove($(this).parent().data('id'));
+                $notes.html(todoList.getNotes());
+            }).on('click', '.btn-todo-ready', function(){
+                todoList.setStatus($(this).parent().data('id'));
+                $notes.html(todoList.getNotes());
+            });
+
+            $('.btn-todo-add').on('click', function(e){
+                e.preventDefault();
+                todoList.add($todoInput.val());
+                todoHelper.trashInput();
+                $notes.html(todoList.getNotes());
+            });
+        });
+    </script>
+</body>
+</html>
